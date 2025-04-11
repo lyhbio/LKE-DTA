@@ -1,0 +1,24 @@
+# macOS 系统文件
+.DS_Store
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+
+# Jupyter
+.ipynb_checkpoints/
+
+# 日志文件
+*.log
+
+# 模型/数据临时文件
+*.pkl
+*.h5
+*.ckpt
+
+# IDE 配置文件
+.idea/
+.vscode/
+
+# 环境配置
+.env
