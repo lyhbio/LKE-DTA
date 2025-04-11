@@ -2,7 +2,7 @@ import json
 import pandas as pd
 
 
-with open('ligands with chembl id.json', 'r') as f:
+with open('data/ligands with chembl id.json', 'r') as f:
     ligands_id=json.load(f)
 ligands={}
 for i in ligands_id:
@@ -20,8 +20,6 @@ for dataset in datasets:
                     smiles=df['compound_iso_smiles'][i]
                     target_name=df['target_name'][i]
                     fi.writelines("{}\t{}\t{}\n".format(ligands[df['compound_iso_smiles'][i]],'BindsTo_Target',df['target_name'][i]))
-
-
             else:
                 for i in range(len(df)):
                     fi.writelines(

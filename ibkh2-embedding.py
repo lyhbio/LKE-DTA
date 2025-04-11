@@ -18,7 +18,7 @@ r_k=pd.read_csv(rela_kiba,sep='\t',header=None).values
 
 drug_embed={}
 prot_embed={}
-dict_davis=json.load(open('ligands with chembl id.json'),object_pairs_hook=OrderedDict)
+dict_davis=json.load(open('data/ligands with chembl id.json'),object_pairs_hook=OrderedDict)
 dict_kiba=json.load(open('data/kiba/ligands_can.txt'),object_pairs_hook=OrderedDict)
 
 
@@ -34,7 +34,7 @@ for i in range(len(e_k)):
     elif 'CHEMBL' not in r_k[i][1] and r_k[i][1] not in prot_embed:
         prot_embed[r_k[i][1]]=e_k[i].tolist()
 
-with open('ibkh-drug_embedding.json','w') as fi:
+with open('data/ibkh-drug_embedding.json','w') as fi:
     json.dump(drug_embed,fi)
 
 

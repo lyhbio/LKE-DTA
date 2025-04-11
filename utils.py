@@ -46,8 +46,8 @@ class TestbedDataset(InMemoryDataset):
         assert (len(xd) == len(xt) and len(xt) == len(y)) #"The three lists must be the same length!"
         data_list = []
         data_len = len(xd)
-        llm_drug=json.load(open('Qwen_representation.json','r'))
-        ibkh_drug=json.load(open('ibkh-drug_embedding.json','r'))
+        llm_drug=json.load(open('data/Qwen_representation.json','r'))
+        ibkh_drug=json.load(open('data/ibkh-drug_embedding.json','r'))
         for i in range(data_len):
             smiles=xd[i]
             target=xt[i]
@@ -57,7 +57,7 @@ class TestbedDataset(InMemoryDataset):
             LKE_DTA=DATA.Data(x=torch.FloatTensor(feature1),
                               y=torch.FloatTensor([labels]),
                               feature=torch.FloatTensor(feature2))
-            LKE_DTA.target=target # 添加prot
+            LKE_DTA.target=target
             data_list.append(LKE_DTA)
 
         if self.pre_filter is not None:

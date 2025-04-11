@@ -13,7 +13,7 @@ def get_embedding(input_text):
 
 all_embedding = {}
 s=0
-with open('IUPAC_name.json','r') as f:
+with open('data/IUPAC_name.json','r') as f:
     drug_descriptions = json.load(f)
     for i in drug_descriptions:
         result = get_embedding(drug_descriptions[i])
@@ -25,5 +25,5 @@ with open('IUPAC_name.json','r') as f:
         s+=1
         print(s)
 
-with open('Qwen_representation.json', 'w') as f:
+with open('data/Qwen_representation.json', 'w') as f:
     json.dump(all_embedding, f, indent=4)
