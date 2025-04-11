@@ -7,7 +7,7 @@ DEVICE = torch.device('cuda' if torch.cuda.is_available() else "cpu")
 class MultiHeadAttentionLayer(nn.Module):
     def __init__(self, hid_dim, n_heads, dropout, device):
         super().__init__()
-        assert hid_dim % n_heads == 0, "hid_dim必须是n_heads的整数倍!"
+        assert hid_dim % n_heads == 0
         self.hid_dim = hid_dim
         self.n_heads = n_heads
         self.head_dim = hid_dim // n_heads
@@ -31,7 +31,7 @@ class MultiHeadAttentionLayer(nn.Module):
         K = K.view(batch_size, -1, self.n_heads, self.head_dim).permute(0, 2, 1, 3)
         V = V.view(batch_size, -1, self.n_heads, self.head_dim).permute(0, 2, 1, 3)
 
-        # 计算注意力分数
+
         energy = torch.matmul(Q, K.permute(0, 1, 3, 2)) / self.scale
 
         if mask is not None:
