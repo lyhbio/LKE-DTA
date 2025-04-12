@@ -52,10 +52,10 @@ DGLBACKEND=pytorch dglke_train --dataset iBKH --data_path ./data/kiba --data_fil
 
 #### **Requirements**
 - Python 3.10  
-- `esm` 2.0.0  
-- `torch` 2.5.1  
-- `dashscope`  
-- `torch_geometric` 2.6.1  
+- esm 2.0.0  
+- torch 2.5.1  
+- dashscope
+- torch_geometric 2.6.1  
 
 #### **Step 2: Drug Semantic Representation (Qwen)**
 
