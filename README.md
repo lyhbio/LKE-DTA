@@ -5,7 +5,7 @@
 
 This program involves two separate environments to extract drug and protein feature representations and model training.
 
-![LKE-DTA Architecture](images/lke-dta-workflow.png)
+(images/lke-dta-workflow.jpg)
 
 ---
 
