@@ -69,7 +69,7 @@ python qwen_representation.py
 
 ---
 
-### **Step 3: Protein Feature Representation (ESM)**
+#### **Step 3: Protein Feature Representation (ESM)**
 
 Using the same environment:
 ```bash
