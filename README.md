@@ -8,6 +8,7 @@ This program involves two separate environments to extract drug and protein feat
 ---
 
 ## Feature Embedding Extraction
+
 ---
 
 ### Environment 1: Drug Feature Embedding via Knowledge Graph
@@ -42,6 +43,7 @@ DGLBACKEND=pytorch dglke_train --dataset iBKH --data_path ./data/kiba --data_fil
 ```
 
 ---
+
 ## Semantic Representation Extraction
 
 ### Environment 2: Semantic Representation via LLM
@@ -73,6 +75,7 @@ Using the same environment:
 ```bash
 python esm_representation.py
 ```
+
 ---
 
 ## DTA Model Training
