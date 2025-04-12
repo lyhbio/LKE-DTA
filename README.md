@@ -3,12 +3,10 @@
 
 **LKE-DTA** is an innovative framework designed to predict **drug–target binding affinity** by integrating **Large Language Model (LLM) representations** and **Knowledge Graph Embeddings**. By combining natural language processing techniques and graph learning methods, LKE-DTA offers a robust approach for modeling and predicting drug–target interactions with high accuracy.
 
+This program involves two separate environments to extract drug and protein feature representations and model training.
 ---
 
 ## Feature Embedding Extraction
-
-This phase involves two separate environments to extract drug and protein feature representations.
-
 ---
 
 ### Environment 1: Drug Feature Embedding via Knowledge Graph
@@ -74,7 +72,6 @@ Using the same environment:
 ```bash
 python esm_representation.py
 ```
-
 ---
 
 ## DTA Model Training
@@ -85,7 +82,6 @@ Utilize the same Python Environment 2 and Use **Distributed Data Parallel (DDP)*
 ```bash
 torchrun --nproc-per-node=4 training.py
 ```
-
 ---
 
 ## Conclusion
