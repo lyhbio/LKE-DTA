@@ -27,7 +27,7 @@ This program involves two separate environments to extract drug and protein feat
 1. **Generate Triplets**  
 Run the following script to prepare the knowledge graph triplets:
 ```bash
-python ibkh-tembedding.py
+python ibkh-embedding.py
 ```
 
 2. **Train TransE Model using iBKH Knowledge Graph**
