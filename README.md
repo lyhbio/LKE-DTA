@@ -16,7 +16,7 @@ This program involves two separate environments to extract drug and protein feat
 ### Environment 1: Drug Feature Embedding
 
 #### **Requirements**
-- Python 3.6  
+- Python 3.7  
 - numpy 1.21.5  
 - pandas 1.3.5  
 - torch 1.2.0  
