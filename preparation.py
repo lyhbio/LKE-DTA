@@ -10,11 +10,11 @@ import numpy as np
 import json
 import pandas as pd
 
-embed_davis='data/davis/TransE_l2_iBKH/iBKH_TransE_l2_entity.npy'
-embed_kiba='data/kiba/TransE_l2_iBKH/iBKH_TransE_l2_entity.npy'
+embed_davis='ckpts/TransE_l2_iBKH_0/iBKH_TransE_l2_entity.npy'
+embed_kiba='ckpts/TransE_l2_iBKH_1/iBKH_TransE_l2_entity.npy'
 
-rela_davis='data/davis/TransE_l2_iBKH/entities.tsv'
-rela_kiba='data/kiba/TransE_l2_iBKH/entities.tsv'
+rela_davis='data/davis/entities.tsv'
+rela_kiba='data/kiba/entities.tsv'
 
 e_d=np.load(embed_davis)
 e_k=np.load(embed_kiba)
