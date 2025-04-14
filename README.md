@@ -16,7 +16,7 @@ This program involves two separate environments to extract drug and protein feat
 ### Environment 1: Drug Feature Embedding
 
 #### **Requirements**
-- Python 3.7  
+- Python 3.7
 - numpy 1.21.5  
 - pandas 1.3.5  
 - torch 1.2.0  
@@ -36,12 +36,12 @@ Run the appropriate command based on the dataset you are using:
 
 **For Davis dataset:**
 ```bash
-DGLBACKEND=pytorch dglke_train --dataset iBKH --data_path ./data/davis --data_files training_triplet.tsv --format raw_udd_hrt --model_name TransE_l2 --batch_size 3000 --neg_sample_size 256 --hidden_dim 400 --gamma 12.0 --lr 0.1 --max_step 50000 --log_interval 100 --batch_size_eval 1000 -adv --regularization_coef 1.00E-09 --num_thread 1 --num_proc 8 --neg_sample_size_eval 1000
+DGLBACKEND=pytorch dglke_train --dataset iBKH --data_path ./data/davis --data_files training_triplets.tsv --format raw_udd_hrt --model_name TransE_l2 --batch_size 1024 --neg_sample_size 256 --hidden_dim 400 --gamma 12.0 --lr 0.1 --max_step 10000 --log_interval 100 --batch_size_eval 1000 -adv --regularization_coef 1.00E-07 --num_thread 1 --num_proc 8 --neg_sample_size_eval 1000
 ```
 
 **For KIBA dataset:**
 ```bash
-DGLBACKEND=pytorch dglke_train --dataset iBKH --data_path ./data/kiba --data_files training_triplet.tsv --format raw_udd_hrt --model_name TransE_l2 --batch_size 3000 --neg_sample_size 256 --hidden_dim 400 --gamma 12.0 --lr 0.1 --max_step 50000 --log_interval 100 --batch_size_eval 1000 -adv --regularization_coef 1.00E-09 --num_thread 1 --num_proc 8 --neg_sample_size_eval 1000
+DGLBACKEND=pytorch dglke_train --dataset iBKH --data_path ./data/kiba --data_files training_triplets.tsv --format raw_udd_hrt --model_name TransE_l2 --batch_size 1024 --neg_sample_size 256 --hidden_dim 400 --gamma 12.0 --lr 0.1 --max_step 10000 --log_interval 100 --batch_size_eval 1000 -adv --regularization_coef 1.00E-07 --num_thread 1 --num_proc 8 --neg_sample_size_eval 1000
 ```
 
 ---

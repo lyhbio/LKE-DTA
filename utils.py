@@ -15,11 +15,11 @@ class TestbedDataset(InMemoryDataset):
         self.dataset=dataset
         if os.path.isfile(self.processed_paths[0]):
             print('way1;Pre-processed data found: {}, loading ...'.format(self.processed_paths[0]))
-            self.data,self.slices = torch.load(self.processed_paths[0])
+            self.data, self.slices = torch.load(self.processed_paths[0], weights_only=False)
         else:
-            print('way2;Pre-processed data found: {}, loading ...'.format(self.processed_paths[0]))
+            print('way2;Pre-processed data not found: {}, loading ...'.format(self.processed_paths[0]))
             self.process(xd,xt,y)
-            self.data,self.slices = torch.load(self.processed_paths[0])
+            self.data, self.slices = torch.load(self.processed_paths[0], weights_only=False)
 
     @property
     def raw_file_names(self):
@@ -65,6 +65,7 @@ class TestbedDataset(InMemoryDataset):
 
         if self.pre_transform is not None:
             data_list = [self.pre_transform(data) for data in data_list]
+
 
         print('Saving to file.')
         data, slices = self.collate(data_list)
