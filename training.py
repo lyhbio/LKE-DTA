@@ -20,7 +20,7 @@ LR = 0.0005
 LOG_INTERVAL = 20
 NUM_EPOCHS = 1000
 
-datasets = ['davis','kiba']
+datasets = ['kiba']
 modelings = [LKE_DTA]
 random_seed = 42
 def set_seed(seed):
@@ -28,6 +28,8 @@ def set_seed(seed):
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
 
 def train_one_epoch(model,device,train_loader,optimizer,epoch):
@@ -135,8 +137,11 @@ def main():
                     ret = [rmse(G,P),
                            mse(G,P),
                            pearson(G,P),
+                           mae(G,P),
+                           r2(G,P),
                            spearman(G,P),
-                           ci(G,P)]
+                           ci(G,P),
+                           ]
                     if ret[1] < best_mse:
 
                         torch.save(model.state_dict(),model_file_name)
@@ -145,11 +150,12 @@ def main():
                         best_epoch = epoch + 1
                         best_mse = ret[1]
                         best_ci = ret[-1]
-
+                        best_pearson=ret[2]
+                        
                         print(
-                            f"[Rank 0] Epoch={best_epoch}  rmse={ret[0]:.4f}  mse={ret[1]:.4f}  ci={ret[-1]:.4f}  --> saved")
+                            f"[Rank 0] Epoch={best_epoch}  rmse={ret[0]:.4f}  mse={ret[1]:.4f}  ci={ret[-1]:.4f}  mae={ret[3]:.4f}  r2={ret[4]:.4f}  pearson={ret[2]:.4f}  --> saved")
                     else:
-                        print(f"[Rank 0] Epoch={epoch + 1}  mse={ret[1]:.4f}  No improvement since epoch {best_epoch}. "
+                        print(f"[Rank 0] Epoch={epoch + 1}  mse={ret[1]:.4f}  mae={ret[3]:.4f}  r2={ret[4]:.4f}  No improvement since epoch {best_epoch}. "
                               f"Best_mse={best_mse:.4f}  best_ci={best_ci:.4f}")
 
     dist.destroy_process_group()

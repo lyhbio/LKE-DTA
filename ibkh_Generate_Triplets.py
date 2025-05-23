@@ -19,9 +19,11 @@ for dataset in datasets:
                 for i in range(len(df)):
                     smiles=df['compound_iso_smiles'][i]
                     target_name=df['target_name'][i]
-                    fi.writelines("{}\t{}\t{}\n".format(ligands[df['compound_iso_smiles'][i]],'BindsTo_Target',df['target_name'][i]))
+                    fi.writelines("{}\t{}\t{}\n".format(ligands[df['compound_iso_smiles'][i]],'/','/'))
             else:
                 for i in range(len(df)):
+                    if df['drug_name'][i]=='CHEMBL1':
+                	    print(i)
+                	    print(dataset,opt)
                     fi.writelines(
-                        "{}\t{}\t{}\n".format(df['drug_name'][i],'BindsTo_Target',df['target_name'][i]))
-
+                        "{}\t{}\t{}\n".format(df['drug_name'][i],'/','/'))
