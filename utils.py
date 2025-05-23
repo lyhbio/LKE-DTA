@@ -106,3 +106,11 @@ def ci(y,f):
         j = i-1
     ci = S/z
     return ci
+
+def mae(y, f):
+    return np.abs(y - f).mean(axis=0)
+
+def r2(y, f):
+    ss_tot = ((y - y.mean())**2).sum(axis=0)
+    ss_res = ((y - f)**2).sum(axis=0)
+    return 1 - ss_res / ss_tot
