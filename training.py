@@ -1,4 +1,3 @@
-# file: main_ddp.py
 import os
 import random
 from typing import List
