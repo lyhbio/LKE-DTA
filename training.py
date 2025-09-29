@@ -1,6 +1,7 @@
+# file: main_ddp.py
 import os
 import random
-from typing import List, Tuple
+from typing import List
 
 import torch
 import torch.nn as nn
@@ -8,18 +9,15 @@ import numpy as np
 
 import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
-from torch.utils.data.distributed import DistributedSampler
-from torch.utils.data import DataLoader, ConcatDataset, Subset
+from torch.utils.data import DataLoader, ConcatDataset
 
 from LKEDTA import LKE_DTA
 from utils import *
-
 TRAIN_BATCH_SIZE = 512
 VAL_BATCH_SIZE = 512
 LR = 5e-4
 LOG_INTERVAL = 20
 NUM_EPOCHS = 1000
-N_SPLITS = 5
 
 datasets = ['davis']
 modelings = [LKE_DTA]
@@ -34,19 +32,6 @@ def set_seed(seed: int):
     torch.cuda.manual_seed_all(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
-
-
-def kfold_indices(n_samples: int, n_splits: int, seed: int) -> List[Tuple[np.ndarray, np.ndarray]]:
-    rng = np.random.RandomState(seed)
-    idx = np.arange(n_samples)
-    rng.shuffle(idx)
-    folds = np.array_split(idx, n_splits)
-    splits = []
-    for k in range(n_splits):
-        val_idx = folds[k]
-        train_idx = np.concatenate([folds[i] for i in range(n_splits) if i != k]) if n_splits > 1 else idx
-        splits.append((train_idx, val_idx))
-    return splits
 
 
 def train_one_epoch(model, device, train_loader, optimizer, epoch):
@@ -85,14 +70,11 @@ def predicting_all_ranks(model, device, loader):
     return None, None
 
 
-def build_concat_dataset(dataset_name: str):
-    train_file = f'processed/{dataset_name}_train.pt'
-    test_file = f'processed/{dataset_name}_test.pt'
-    if (not os.path.isfile(train_file)) or (not os.path.isfile(test_file)):
+def load_fold_dataset(dataset_name: str, fold_id: int):
+    file = f'processed/{dataset_name}_fold{fold_id}.pt'
+    if not os.path.isfile(file):
         return None
-    train_ds = TestbedDataset(root='./', dataset=dataset_name + '_train')
-    test_ds = TestbedDataset(root='./', dataset=dataset_name + '_test')
-    return ConcatDataset([train_ds, test_ds])
+    return TestbedDataset(root='./', dataset=f"{dataset_name}_fold{fold_id}")
 
 
 def safe_r2m(G, P):
@@ -113,40 +95,47 @@ def main():
         for modeling in modelings:
             model_st = modeling.__name__
             if dist.get_rank() == 0:
-                print(f"\n==> Running 5-fold CV on {model_st}_{dataset}")
-
-            full_ds = build_concat_dataset(dataset)
-            if full_ds is None:
-                if dist.get_rank() == 0:
-                    print(f"[WARN] processed/{dataset}_train.pt or _test.pt missing, "
-                          f"please run preparation.py first. Skip dataset.")
-                continue
-
-            n_samples = len(full_ds)
-            splits = kfold_indices(n_samples, N_SPLITS, random_seed)
+                print(f"\n==> Running 5-fold CV on {model_st}_{dataset} (predefined folds)")
 
             folds_metrics = []
             header = ['rmse', 'mse', 'pearson', 'mae', 'r2', 'spearman', 'ci', 'r2m']
 
-            # ----------- Folds 1~5 -----------
-            for fold_id, (train_idx, val_idx) in enumerate(splits, start=1):
+            # ----------- Folds 0~4 -----------
+            for fold_id in range(5):
+                test_ds = load_fold_dataset(dataset, fold_id)
+                if test_ds is None:
+                    if dist.get_rank() == 0:
+                        print(f"[WARN] missing processed/{dataset}_fold{fold_id}.pt, skip.")
+                    continue
+
+                train_datasets, train_fold_ids = [], []
+                for other_id in range(5):
+                    if other_id == fold_id:
+                        continue
+                    other_ds = load_fold_dataset(dataset, other_id)
+                    if other_ds is not None:
+                        train_datasets.append(other_ds)
+                        train_fold_ids.append(other_id)
+
+                if len(train_datasets) == 0:
+                    continue
+                train_ds = ConcatDataset(train_datasets)
+
                 if dist.get_rank() == 0:
-                    print(f"\n[Fold {fold_id}/{N_SPLITS}] train={len(train_idx)} val={len(val_idx)}")
+                    print(f"\n[Fold {fold_id}/5]")
+                    print(f"  Test set   : fold {fold_id} ({len(test_ds)} samples)")
+                    print(f"  Train set  : folds {train_fold_ids} (total {len(train_ds)} samples)")
 
-                train_subset = Subset(full_ds, train_idx.tolist())
-                val_subset = Subset(full_ds, val_idx.tolist())
-
-                train_sampler = DistributedSampler(train_subset, shuffle=True, drop_last=True)
                 train_loader = DataLoader(
-                    train_subset,
+                    train_ds,
                     batch_size=TRAIN_BATCH_SIZE,
-                    sampler=train_sampler,
+                    shuffle=True,
                     num_workers=4,
                     pin_memory=True,
                     drop_last=True
                 )
                 val_loader = DataLoader(
-                    val_subset,
+                    test_ds,
                     batch_size=VAL_BATCH_SIZE,
                     shuffle=False,
                     num_workers=4,
@@ -167,7 +156,6 @@ def main():
                 result_file = f'{model_st}_{dataset}_fold{fold_id}.csv'
 
                 for epoch in range(1, NUM_EPOCHS + 1):
-                    train_sampler.set_epoch(epoch)
                     _ = train_one_epoch(ddp_model, device, train_loader, optimizer, epoch)
 
                     G, P = predicting_all_ranks(ddp_model, device, val_loader)
@@ -192,7 +180,6 @@ def main():
                                   f"No improvement since {best_epoch}, "
                                   f"Best_mse={best_mse:.4f} best_ci={best_ci:.4f}")
 
-                
                 del model, ddp_model, optimizer, train_loader, val_loader
                 torch.cuda.empty_cache()
                 dist.barrier()
@@ -200,7 +187,6 @@ def main():
                 if dist.get_rank() == 0 and best_metrics is not None:
                     folds_metrics.append(best_metrics)
 
-           
             if dist.get_rank() == 0 and len(folds_metrics) > 0:
                 arr = np.array([[*m[:-1], (m[-1] if m[-1] else np.nan)] for m in folds_metrics], dtype=float)
                 mean_vec, std_vec = np.nanmean(arr, axis=0), np.nanstd(arr, axis=0, ddof=1)

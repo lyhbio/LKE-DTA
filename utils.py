@@ -114,3 +114,31 @@ def r2(y, f):
     ss_tot = ((y - y.mean())**2).sum(axis=0)
     ss_res = ((y - f)**2).sum(axis=0)
     return 1 - ss_res / ss_tot
+
+    
+import numpy as np
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.linear_model import LinearRegression
+
+def r2m_score(y_true, y_pred):
+    """
+    计算 MSE, R², R²₀ 和 R²m (Tropsha 定义)
+    y_true: array-like, shape (n_samples,)
+    y_pred: array-like, shape (n_samples,)
+    """
+    y_true = np.array(y_true).reshape(-1, 1)
+    y_pred = np.array(y_pred).reshape(-1, 1)
+
+
+    mse = mean_squared_error(y_true, y_pred)
+    r2 = r2_score(y_true, y_pred)
+
+
+    model = LinearRegression(fit_intercept=False)
+    model.fit(y_true, y_pred)
+    y_pred0 = model.predict(y_true)
+    r2_0 = r2_score(y_pred, y_pred0)
+
+    r2m = r2 * (1 - np.sqrt(abs(r2 - r2_0)))
+
+    return r2m
