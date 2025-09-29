@@ -1,21 +1,15 @@
-# -*- coding: utf-8 -*-
-"""
-直接合并 IUPAC_name.json 和 target_sequence.json 到 chembl_dta_test.csv
-新增列：iupac_name, sequence
-"""
-
 import json
 import pandas as pd
 
-# 输入文件
+
 input_csv = "chembl_dta_test.csv"
 iupac_json = "IUPAC_name.json"
 seq_json = "target_sequence.json"
 
-# 输出文件
+
 out_csv = "test.csv"
 
-# 读取数据
+
 df = pd.read_csv(input_csv)
 
 with open(iupac_json, "r", encoding="utf-8") as f:
@@ -34,7 +28,7 @@ def get_seq(tid):
 
 df["sequence"] = df["target_chembl_id"].map(get_seq)
 
-# 保存结果
+
 df.to_csv(out_csv, index=False)
 print(f"[finish]  {out_csv}")
 
