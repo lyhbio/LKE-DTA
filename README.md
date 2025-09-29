@@ -30,6 +30,7 @@ Run the following script to prepare the knowledge graph triplets:
 python ibkh_Generate_Triplets.py
 ```
 
+
 2. **Train TransE Model using iBKH Knowledge Graph**
 
 Run the appropriate command based on the dataset you are using:
