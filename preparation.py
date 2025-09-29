@@ -10,9 +10,7 @@ import numpy as np
 import json
 import pandas as pd
 
-random_seed = 42
-N_SPLITS = 5
-datasets = ["davis", "kiba"]
+
 
 def set_seed(seed: int):
     random.seed(seed)
@@ -26,6 +24,9 @@ def split_into_folds(n_samples: int, n_splits: int, seed: int):
     return folds
 
 def main():
+    random_seed = 42
+    N_SPLITS = 5
+    datasets = ["davis", "kiba"]
     set_seed(random_seed)
 
     for dataset in datasets:
