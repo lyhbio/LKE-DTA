@@ -1,7 +1,6 @@
 import json
 import pandas as pd
 
-
 with open('data/ligands with chembl id.json', 'r') as f:
     ligands_id=json.load(f)
 ligands={}
