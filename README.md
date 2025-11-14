@@ -14,6 +14,11 @@ This program involves two separate environments to extract drug and protein feat
 ---
 data/davis/folds/test_fold_setting1.txt,train_fold_setting1.txt; data/davis/Y,ligands_can.txt,proteins.txt data/kiba/folds/test_fold_setting1.txt,train_fold_setting1.txt; data/kiba/Y,ligands_can.txt,proteins.txt These file were downloaded from https://github.com/hkmztrk/DeepDTA/tree/master/data
 
+
+---
+**all of the embeddings and representations are already in "./data" path that you can skip Step 1 & 2 & 3 and run the model straightly**
+---
+
 ---
 
 ## Feature Embedding Extraction
